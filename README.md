@@ -49,4 +49,4 @@ scripts/run_dev.sh
 
 ## License
 
-`modeliter` is distributed under the terms of the [AGPL-3.0](https://opensource.org/licenses/AGPL-3.0) license.
+The `modeliter` source code, Python package, and application are all distributed under the terms of the [MIT](https://opensource.org/licenses/MIT) license.
