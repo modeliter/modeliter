@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "modeliter"
+description = "The Modeliter project"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Bobby Chen", email = "chenbobby168@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+]
+dependencies = [
+  "click",
+  "starlette",
+  "uvicorn",
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/unknown/modeliter#readme"
+Issues = "https://github.com/unknown/modeliter/issues"
+Source = "https://github.com/unknown/modeliter"
+
+[project.scripts]
+modeliter = "modeliter:main"
+
+[tool.hatch.version]
+path = "modeliter/__about__.py"
+
+[tool.hatch.build]
+ignore-vcs = true
+artifacts = ["/site"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["modeliter"]
+
+[tool.hatch.build.hooks.custom]
+path = "scripts/build_frontend.py"
+
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=modeliter --cov=tests"
+no-cov = "cov --no-cov"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38", "39", "310"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "modeliter/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
