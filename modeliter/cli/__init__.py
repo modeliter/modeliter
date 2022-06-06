@@ -2,7 +2,7 @@ import click
 import uvicorn
 
 from modeliter.__about__ import __version__
-from modeliter.http import create_app
+from modeliter.httpserver import create_app
 
 
 @click.group()

@@ -18,6 +18,7 @@ classifiers = [
 ]
 dependencies = [
   "click",
+  "hatchling",
   "starlette",
   "uvicorn",
 ]
@@ -36,20 +37,22 @@ path = "modeliter/__about__.py"
 
 [tool.hatch.build]
 ignore-vcs = true
-artifacts = ["/site"]
-
-[tool.hatch.build.targets.wheel]
-packages = ["modeliter"]
+artifacts = ["modeliter_frontend/build"]
 
 [tool.hatch.build.hooks.custom]
-path = "scripts/build_frontend.py"
-
+[tool.hatch.build.targets.wheel]
+packages = ["modeliter"]
 
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
   "pytest-cov",
 ]
+python = "3.10"
+pre-install-commands = [
+  "pip install --upgrade pip",
+]
+
 [tool.hatch.envs.default.scripts]
 cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=modeliter --cov=tests"
 no-cov = "cov --no-cov"

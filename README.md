@@ -29,16 +29,18 @@ git clone https://github.com/chenbobby/modeliter
 cd modeliter
 ```
 
-#### 2. Run the development setup script.
+#### 2. Install Hatch.
 
+**macos**
 ```sh
-scripts/setup_dev.sh
+brew update
+brew install hatch
 ```
 
-#### 3. Activate your virtual environment.
+#### 3. Activate your Hatch shell.
 
 ```sh
-source .venv/bin/activate
+hatch shell
 ```
 
 ### Run the HTTP server in development mode
