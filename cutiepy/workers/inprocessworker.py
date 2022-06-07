@@ -1,4 +1,4 @@
-from cutiepy.core import Task, TaskRequest, Worker, WorkRequest
+from cutiepy.core import Task, Worker, WorkRequest
 from cutiepy.types import Error, Ok, Result
 
 
@@ -7,10 +7,12 @@ class InProcessWorker(Worker):
         broker = self.broker
 
         while True:
-            task_request = await broker.get_work()
-            result = await self._execute_task(task=task_request.task)
-            task_request.result = result
-            await broker.put_task_request(task_request=task_request)
+            work_request = WorkRequest(worker_ref="Me!")
+            task_run = await broker.get_work(work_request=work_request)
+            task = task_run.task
+            result = await self._execute_task(task=task)
+            task_run.result = result
+            await broker.put_task_run(task_run=task_run)
 
 
     async def _execute_task(self, *, task: Task) -> Result:
