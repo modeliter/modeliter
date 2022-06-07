@@ -1,5 +1,5 @@
 from pydantic.dataclasses import dataclass
-from typing import Any, TypeAlias
+from typing import Any, Dict, TypeAlias
 
 
 @dataclass
@@ -13,3 +13,6 @@ class Error:
 
 
 Result: TypeAlias = Ok | Error
+TagKey: TypeAlias = str
+TagValue: TypeAlias = int | str
+Tag: TypeAlias = Dict[TagKey, TagValue]

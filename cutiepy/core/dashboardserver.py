@@ -1,4 +1,3 @@
-import asyncio
 from pydantic.dataclasses import dataclass
 from .broker import Broker
 from .supervisor import Supervisor
@@ -15,5 +14,8 @@ class DashboardServer:
     broker: Broker
     supervisor: Supervisor
 
-    async def run(self):
+    async def start(self):
+        return await self._start()
+
+    async def _start(self):
         raise NotImplementedError
