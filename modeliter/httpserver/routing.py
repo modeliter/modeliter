@@ -9,8 +9,13 @@ from modeliter.httpserver import frontend, api
 
 routes = [
     Route(
-        path="/api/v1/reverse",
-        endpoint=api.post_reverse,
+        path="/api/v1/names",
+        endpoint=api.get_names,
+        methods=["GET"],
+    ),
+    Route(
+        path="/api/v1/names",
+        endpoint=api.post_name(),
         methods=["POST"],
     ),
     Mount(
