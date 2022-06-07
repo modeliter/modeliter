@@ -4,7 +4,7 @@ from cutiepy.core import Supervisor
 
 
 class InProcessSupervisor(Supervisor):
-    async def run(self):
+    async def _start(self):
         num_workers = self.supervisor_config.num_workers
         worker_config = self.supervisor_config.worker_config
         broker = self.broker

@@ -14,11 +14,11 @@ class Worker:
     broker: Broker
 
 
-    async def run(self):
-        return await self._run()
+    async def start(self):
+        return await self._start()
 
 
-    async def _run(self):
+    async def _start(self):
         raise NotImplementedError
 
 

@@ -4,7 +4,7 @@ from cutiepy.types import Error, Ok, Result
 
 
 class InProcessWorker(Worker):
-    async def _run(self):
+    async def _start(self):
         while True:
             task = await self.broker.pop_task()
             result = await self._execute_task(task=task)

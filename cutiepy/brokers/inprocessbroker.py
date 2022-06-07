@@ -2,4 +2,5 @@ from cutiepy.core import Broker
 
 
 class InProcessBroker(Broker):
-    pass
+    async def pop_task(self):
+        pass

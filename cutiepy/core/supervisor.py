@@ -15,5 +15,8 @@ class Supervisor:
     supervisor_config: SupervisorConfig
     broker: Broker
 
-    async def run(self):
+    async def start(self):
+        return await self._start()
+
+    async def _start(self):
         raise NotImplementedError
