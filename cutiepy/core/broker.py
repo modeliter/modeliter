@@ -11,8 +11,8 @@ class BrokerConfig:
 class Broker:
     broker_config: BrokerConfig
 
-    async def pop_task():
+    async def pop_task(self):
         raise NotImplementedError
 
-    async def put_task_result(task, _result: Result):
+    async def put_task_result(self, *, task, result: Result):
         raise NotImplementedError

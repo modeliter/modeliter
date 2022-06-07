@@ -1,1 +1,1 @@
-from .inprocess import InProcessBroker
+from .inprocessbroker import InProcessBroker

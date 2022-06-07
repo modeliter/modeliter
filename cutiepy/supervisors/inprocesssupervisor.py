@@ -1,10 +1,8 @@
 import asyncio
 from cutiepy import factories
 from cutiepy.core import Supervisor
-from pydantic.dataclasses import dataclass
 
 
-@dataclass
 class InProcessSupervisor(Supervisor):
     async def run(self):
         num_workers = self.supervisor_config.num_workers

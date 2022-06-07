@@ -1,1 +1,1 @@
-from .inprocess import InProcessDashboardServer
+from .inprocessdashboardserver import InProcessDashboardServer

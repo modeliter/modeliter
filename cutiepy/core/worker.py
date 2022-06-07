@@ -13,13 +13,14 @@ class Worker:
     worker_config: WorkerConfig
     broker: Broker
 
+
     async def run(self):
-        while True:
-            task = await self.broker.pop_task()
-            try:
-                output = task.f(*task.task_args, **task.task_kwargs)
-                result = Ok(value=output)
-            except Exception as e:
-                result = Error(value=e)
-            finally:
-                await self.broker.put_task_result(task, result)
+        return await self._run()
+
+
+    async def _run(self):
+        raise NotImplementedError
+
+
+    async def _execute_task(self, *, task):
+        raise NotImplementedError

@@ -16,5 +16,4 @@ class DashboardServer:
     supervisor: Supervisor
 
     async def run(self):
-        while True:
-            await asyncio.sleep(1)
+        raise NotImplementedError

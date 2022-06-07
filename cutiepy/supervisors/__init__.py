@@ -1,1 +1,1 @@
-from .inprocess import InProcessSupervisor
+from .inprocesssupervisor import InProcessSupervisor

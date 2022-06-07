@@ -16,9 +16,4 @@ class Supervisor:
     broker: Broker
 
     async def run(self):
-        worker_config = self.supervisor_config.worker_config
-        workers_coroutines = [
-            Worker(worker_config=worker_config).run()
-            for _ in range(self.supervisor_config.num_workers)
-        ]
-        await asyncio.gather(*workers_coroutines)
+        raise NotImplementedError
