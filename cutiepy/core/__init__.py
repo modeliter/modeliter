@@ -3,6 +3,7 @@ from .broker import Broker, BrokerConfig
 from .dashboardserver import DashboardServer, DashboardServerConfig
 from .supervisor import Supervisor, SupervisorConfig
 from .task import Task
-from .task_request import TaskRequest, TaskRequestStatus
+from .taskrequest import TaskRequest, TaskRequestStatus
+from .taskrun import TaskRun
 from .worker import Worker, WorkerConfig
-from .work_request import WorkRequest
+from .workrequest import WorkRequest

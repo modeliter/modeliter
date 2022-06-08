@@ -4,10 +4,9 @@ import subprocess
 
 class BuildFrontend(BuildHookInterface):
     PLUGIN_NAME = "build_frontend"
-    FRONTEND_DIR_PATH = "modeliter_frontend"
+    FRONTEND_DIR_PATH = "cutiepy_dashboard_frontend"
 
     def initialize(self, version, build_data):
-        print("Building frontend...")
         subprocess.run(
             args=["npm", "run", "build"],
             cwd=self.FRONTEND_DIR_PATH,
@@ -15,7 +14,3 @@ class BuildFrontend(BuildHookInterface):
         )
 
         return super().initialize(version, build_data)
-
-    def clean(self, version):
-        print("Cleaning frontend...")
-        return super().clean(version)

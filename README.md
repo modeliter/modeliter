@@ -1,4 +1,4 @@
-# modeliter
+# CutiePy
 
 [![PyPI - Version](https://img.shields.io/pypi/v/modeliter.svg)](https://pypi.org/project/modeliter)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/modeliter.svg)](https://pypi.org/project/modeliter)
@@ -8,8 +8,8 @@
 ## Usage
 
 ```sh
-pip install modeliter
-modeliter serve
+pip install cutiepy
+cutiepy run
 ```
 
 ## Development Guides
@@ -25,8 +25,8 @@ python --version
 #### 1. Clone the repository.
 
 ```sh
-git clone https://github.com/chenbobby/modeliter
-cd modeliter
+git clone https://github.com/chenbobby/cutiepy
+cd cutiepy
 ```
 
 #### 2. Install Hatch.
@@ -51,4 +51,4 @@ scripts/run_dev.sh
 
 ## License
 
-The `modeliter` source code, Python package, and application are all distributed under the terms of the [MIT](https://opensource.org/licenses/MIT) license.
+The `cutiepy` source code, Python package, and application are all distributed under the terms of the [MIT](https://opensource.org/licenses/MIT) license.

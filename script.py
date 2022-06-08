@@ -1,28 +1,25 @@
-class Model:
-    def fit(self, data):
-        pass
+import time
+import uuid
+import pydantic
+import pickle
 
-    def predict(self, data):
-        pass
+data = [b"b" * (2 ** 10)]
 
-class ModelPackage:
-    def __init__(self, model):
-        self.model = model
+def a():
+    time.sleep(100)
+    print(data)
 
-    def generate(self):
-        pass
-    
+def b():
+    a()
+    uuid.uuid4()
 
-class ModelPackagePublisher:
-    def __init__(self, index_url):
-        self.index_url = index_url
+def c():
+    b()
+    pydantic.BaseClass()
 
-    def publish(self, model_package):
-        pass
 
-m = Model()
-m.fit(1)
-mp = ModelPackage(m)
-mp.generate()
-p = ModelPackagePublisher("http://localhost:8080")
-p.publish(mp)
+print(len(str(pickle.dumps(a))))
+print(len(str(pickle.dumps(b))))
+print(len(str(pickle.dumps(c))))
+print(len(pickle.dumps(data)))
+a(b=10)

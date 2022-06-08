@@ -6,6 +6,7 @@ from .worker import Worker, WorkerConfig
 
 @dataclass
 class SupervisorConfig:
+    type: str
     worker_config: WorkerConfig
     num_workers: int = 3
 

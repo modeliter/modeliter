@@ -9,12 +9,12 @@ class InProcessSupervisor(Supervisor):
         worker_config = self.supervisor_config.worker_config
         broker = self.broker
 
-        worker_coroutines = map(
-            lambda _: factories.build_worker(
+        worker_coroutines = []
+        for _ in range(num_workers):
+            worker = factories.build_worker(
                 worker_config=worker_config,
                 broker=broker,
-            ).run(),
-            range(num_workers),
-        )
+            )
+            worker_coroutines.append(worker.start())
 
         await asyncio.gather(*worker_coroutines)

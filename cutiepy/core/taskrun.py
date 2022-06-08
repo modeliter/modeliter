@@ -1,6 +1,9 @@
-from cutiepy.core import Task
-from cutiepy.types import Result
-from datetime import datetime
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from cutiepy.core import Task
+    from cutiepy.types import Result
+    from datetime import datetime
 from pydantic.dataclasses import dataclass
 
 

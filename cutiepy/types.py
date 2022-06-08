@@ -9,10 +9,10 @@ class Ok:
 
 @dataclass
 class Error:
-    value: Exception
+    value: Any
 
 
 Result: TypeAlias = Ok | Error
 TagKey: TypeAlias = str
 TagValue: TypeAlias = int | str
-Tag: TypeAlias = Dict[TagKey, TagValue]
+Tags: TypeAlias = Dict[TagKey, TagValue]

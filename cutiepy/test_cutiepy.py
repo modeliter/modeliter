@@ -1,3 +1,4 @@
+import time
 from . import *
 
 app: App = App()
@@ -15,6 +16,4 @@ def long_running_function(arg1, arg2):
 long_running_function(1, 2)     # 10
 
 # Enqueue task
-run: Run = long_running_function.run(1, 2)
-
-
+long_running_function.enqueue(1, 2)

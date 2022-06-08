@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "modeliter"
-description = "The Modeliter project"
+name = "cutiepy"
+description = "The CutiePy project"
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
@@ -19,6 +19,7 @@ classifiers = [
 dependencies = [
   "click",
   "hatchling",
+  "pydantic",
   "starlette",
   "uvicorn",
 ]
@@ -30,18 +31,18 @@ Issues = "https://github.com/unknown/modeliter/issues"
 Source = "https://github.com/unknown/modeliter"
 
 [project.scripts]
-modeliter = "modeliter:main"
+cutiepy = "cutiepy:main"
 
 [tool.hatch.version]
-path = "modeliter/__about__.py"
+path = "cutiepy/__init__.py"
 
 [tool.hatch.build]
 ignore-vcs = true
-artifacts = ["modeliter_frontend/build"]
+artifacts = ["cutiepy_dashboard_frontend/build"]
 
 [tool.hatch.build.hooks.custom]
 [tool.hatch.build.targets.wheel]
-packages = ["modeliter"]
+packages = ["cutiepy"]
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -64,9 +65,6 @@ python = ["37", "38", "39", "310"]
 [tool.coverage.run]
 branch = true
 parallel = true
-omit = [
-  "modeliter/__about__.py",
-]
 
 [tool.coverage.report]
 exclude_lines = [

@@ -1,12 +1,12 @@
 from cutiepy.types import Result
 from pydantic.dataclasses import dataclass
 from .broker import Broker
-from .task_request import TaskRequest
+from .taskrequest import TaskRequest
 
 
 @dataclass
 class WorkerConfig:
-    pass
+    type: str
 
 
 @dataclass
@@ -20,8 +20,4 @@ class Worker:
 
 
     async def _start(self):
-        raise NotImplementedError
-
-
-    async def _execute_task(self, *, task: TaskRequest) -> Result:
         raise NotImplementedError

@@ -5,7 +5,8 @@ from .supervisor import Supervisor
 
 @dataclass
 class DashboardServerConfig:
-    pass
+    type: str
+    debug: bool = False
 
 
 @dataclass
