@@ -20,7 +20,7 @@ class Runner:
 
     def main(self):
         # Setup this runner process.
-        self._install_signal_handlers(handler=self._begin_shutdown)
+        self._install_signal_handlers()
 
         # Main loop.
         while not self.should_shutdown:
@@ -32,24 +32,21 @@ class Runner:
             if self.shutdown_conn.poll():
                 self.should_shutdown = self.shutdown_conn.recv()
 
-        # Shutdown.
+        # Gracefully shutdown.
         self.config_conn.close()
         self.shutdown_conn.close()
 
     def tick(self):
         time.sleep(1)
 
-    def _install_signal_handlers(self, handler: Callable):
+    def _install_signal_handlers(self):
         signals = [signal.SIGINT, signal.SIGTERM, signal.SIGHUP]
         for s in signals:
-            signal.signal(s, handler)
+            signal.signal(s, self._begin_shutdown)
 
     def _begin_shutdown(self, _signum, _frame):
         print("Runner is shutting down...")
         self.should_shutdown = True
-
-    def _force_shutdown(self, _signum, _frame):
-        raise RuntimeError("Worker forced shutdown.")
 
 def target_runner_process(
     *,
@@ -70,7 +67,7 @@ class Worker:
 
     def main(self):
         # Setup this worker process.
-        self._install_signal_handlers(handler=self._begin_shutdown)
+        self._install_signal_handlers()
         self._sync_with_broker()
 
         # Setup and spawn a runner process.
@@ -90,29 +87,23 @@ class Worker:
         while not self.should_shutdown:
             worker_config = self._sync_with_broker()
             runner_config_conn.send(worker_config)
-            time.sleep(1)
 
         # Gracefully shutdown.
-        self._install_signal_handlers(handler=self._force_shutdown)
         runner.join()
         runner_config_conn.close()
         runner_shutdown_conn.close()
 
     def _sync_with_broker(self):
-        pass
+        time.sleep(1)
 
-    def _install_signal_handlers(self, handler: Callable):
+    def _install_signal_handlers(self):
         signals = [signal.SIGINT, signal.SIGTERM, signal.SIGHUP]
         for s in signals:
-            signal.signal(s, handler)
+            signal.signal(s, self._begin_shutdown)
 
     def _begin_shutdown(self, _signum, _frame):
         print("Worker is shutting down...")
         self.should_shutdown = True
-
-    def _force_shutdown(self, _signum, _frame):
-        raise RuntimeError("Worker forced shutdown.")
-
 
 def target_worker_process(*, worker_config: WorkerConfig):
     Worker(worker_config).main()
@@ -125,7 +116,7 @@ class Supervisor:
 
     def main(self):
         # Setup this supervisor process.
-        self._install_signal_handlers(handler=self._begin_shutdown)
+        self._install_signal_handlers()
 
         # Spawn and supervise the worker processes.
         workers: list[Process] = [None] * self.num_workers
@@ -142,7 +133,6 @@ class Supervisor:
             time.sleep(1)
 
         # Gracefully shutdown.
-        self._install_signal_handlers(handler=self._force_shutdown)
         for worker in workers:
             worker.join()
 
@@ -154,18 +144,15 @@ class Supervisor:
         worker.start()
         return worker
 
-    def _install_signal_handlers(self, handler: Callable):
+    def _install_signal_handlers(self):
         signals = [signal.SIGINT, signal.SIGTERM, signal.SIGHUP]
         for s in signals:
-            signal.signal(s, handler)
+            signal.signal(s, self._begin_shutdown)
 
     def _begin_shutdown(self, _signum, _frame):
         print("Supervisor is shutting down...")
         self.should_shutdown = True
 
-    def _force_shutdown(self, _signum, _frame):
-        raise RuntimeError("Supervisor forced shutdown.")
-
 if __name__ == "__main__":
     worker_config = WorkerConfig()
-    Worker(worker_config).main()
+    Supervisor(worker_config=worker_config).main()
