@@ -34,7 +34,7 @@ Here are some high-level resources to help you learn more about CutiePy.
 <p>
     <a href="/docs/quickstart" style={{"font-size": "1.25rem", "font-weight": "bold"}}>API Reference</a>
     <br/>
-    <span style={{"font-style": "italic"}}>User manual for the CutiePy library and <code style={{"font-style": "normal"}}>cutiepy</code> commands</span>
+    <span style={{"font-style": "italic"}}>User manual for the CutiePy library, <code style={{"font-style": "normal"}}>cutiepy</code> commands, and configuration options</span>
 </p>
 
 ## What is CutiePy?

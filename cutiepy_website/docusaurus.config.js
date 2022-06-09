@@ -130,7 +130,7 @@ const config = {
                 to: "/blog",
               },
               {
-                label: "CutiePy Source Code",
+                label: "GitHub",
                 href: "https://github.com/cutiepy/cutiepy",
               },
             ],
