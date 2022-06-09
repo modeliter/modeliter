@@ -7,6 +7,7 @@ from .workrequest import WorkRequest
 @dataclass
 class BrokerConfig:
     type: str
+    sqlite_uri: str
 
 
 @dataclass

@@ -1,5 +1,6 @@
 from cutiepy.core import Task, Worker, WorkRequest
 from cutiepy.types import Error, Ok, Result
+import asyncio
 
 
 class InProcessWorker(Worker):
@@ -8,7 +9,13 @@ class InProcessWorker(Worker):
 
         while True:
             work_request = WorkRequest(worker_ref="Me!")
-            task_run = await broker.get_work(work_request=work_request)
+            result = await broker.get_work(work_request=work_request)
+            if isinstance(result, Error):
+                print(result.value)
+                await asyncio.sleep(1)
+                continue
+
+            task_run = result.value
             task = task_run.task
             result = await self._execute_task(task=task)
             task_run.result = result

@@ -11,13 +11,9 @@ from .task import Task
 class App:
     broker: Broker
     supervisor: Supervisor
-    dashboard_server: DashboardServer
 
     async def start(self):
-        await asyncio.gather(
-            self.supervisor.start(),
-            self.dashboard_server.start(),
-        )
+        await asyncio.wait([self.supervisor.start()])
 
     async def task(self, f: Callable) -> Task:
         broker = self.broker

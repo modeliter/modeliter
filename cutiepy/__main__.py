@@ -17,17 +17,9 @@ async def main():
         broker=broker,
     )
 
-    dashboard_server_config = DashboardServerConfig()
-    dashboard_server = factories.build_dashboard_server(
-        dashboard_server_config=dashboard_server_config,
-        broker=broker,
-        supervisor=supervisor,
-    )
-
     app = factories.build_app(
         broker=broker,
         supervisor=supervisor,
-        dashboard_server=dashboard_server,
     )
 
     await app.start()

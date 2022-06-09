@@ -4,6 +4,7 @@ if TYPE_CHECKING:
     from cutiepy.core import Task
     from cutiepy.types import Result
     from datetime import datetime
+    from typing import Optional
 from pydantic.dataclasses import dataclass
 
 
@@ -13,8 +14,8 @@ class TaskRun:
     task: Task
     broker_ref: str
     worker_ref: str
-    broker_sent_at: datetime
-    broker_received_at: datetime
-    worker_started_at: datetime
-    worker_finished_at: datetime
+    broker_created_at: datetime
+    worker_received_at: Optional[datetime]
+    worker_returned_at: Optional[datetime]
+    broker_received_at: Optional[datetime]
     result: Result

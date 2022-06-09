@@ -3,15 +3,16 @@ import click
 from cutiepy import factories
 from cutiepy.core import (
     BrokerConfig,
-    DashboardServerConfig,
     SupervisorConfig,
     WorkerConfig,
 )
 
-@click.command(help="Run workers and/or the dashboard web server.")
+
+@click.command(help="Start workers to execute tasks.")
 def run():
     broker_config = BrokerConfig(
-        type="inprocess",
+        type="sqlite",
+        sqlite_uri="sqlite:///cutiepy.db",
     )
     broker = factories.build_broker(broker_config=broker_config)
 
@@ -26,19 +27,9 @@ def run():
         broker=broker,
     )
 
-    dashboard_server_config = DashboardServerConfig(
-        type="inprocess",
-    )
-    dashboard_server = factories.build_dashboard_server(
-        dashboard_server_config=dashboard_server_config,
-        broker=broker,
-        supervisor=supervisor,
-    )
-
     app = factories.build_app(
         broker=broker,
         supervisor=supervisor,
-        dashboard_server=dashboard_server,
     )
 
     asyncio.run(app.start())

@@ -15,8 +15,8 @@ class DashboardServer:
     broker: Broker
     supervisor: Supervisor
 
-    async def start(self):
-        return await self._start()
+    async def start(self, port):
+        return await self._start(port)
 
     async def _start(self):
         raise NotImplementedError

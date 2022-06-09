@@ -8,7 +8,7 @@ from .worker import Worker, WorkerConfig
 class SupervisorConfig:
     type: str
     worker_config: WorkerConfig
-    num_workers: int = 3
+    num_workers: int = 2
 
 
 @dataclass

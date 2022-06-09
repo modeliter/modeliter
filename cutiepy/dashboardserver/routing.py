@@ -1,5 +1,5 @@
 from cutiepy.core import Broker
-from cutiepy.httpserver import frontend, api
+from cutiepy.dashboardserver import frontend, api
 from starlette.routing import Route, Mount
 
 

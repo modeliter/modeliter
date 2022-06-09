@@ -1,6 +1,7 @@
 import asyncio
 from cutiepy import factories
 from cutiepy.core import Supervisor
+from signal import SIGINT, SIGTERM
 
 
 class InProcessSupervisor(Supervisor):
@@ -17,4 +18,4 @@ class InProcessSupervisor(Supervisor):
             )
             worker_coroutines.append(worker.start())
 
-        await asyncio.gather(*worker_coroutines)
+        await asyncio.wait(worker_coroutines)
