@@ -119,7 +119,7 @@ class WorkerProcess:
 
 
 @dataclass
-class Supervisor:
+class SupervisorProcess:
     broker: Broker
     worker_config: WorkerConfig
     num_workers: int = 1
@@ -163,9 +163,3 @@ class Supervisor:
     def _begin_shutdown(self, _signum, _frame):
         print("Supervisor: shutting down...")
         self.should_shutdown = True
-
-
-if __name__ == "__main__":
-    worker_config = WorkerConfig()
-    supervisor = Supervisor(worker_config=worker_config, num_workers=2)
-    supervisor.main()
