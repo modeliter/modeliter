@@ -1,4 +1,4 @@
-from cutiepy.brokers import InProcessBroker
+from cutiepy.brokers import SQLiteBroker
 from cutiepy.core import (
     App,
     Broker,
@@ -16,7 +16,7 @@ def build_app(
 
 def build_broker(*, broker_config: BrokerConfig) -> Broker:
     broker_type_to_class = {
-        "sqlite": InProcessBroker,
+        "sqlite": SQLiteBroker,
     }
     broker_constructor = broker_type_to_class[broker_config.type]
     return broker_constructor(broker_config=broker_config)

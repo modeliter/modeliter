@@ -1,14 +1,18 @@
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import uuid
 
 from cutiepy.core import Broker, TaskRequest, TaskRun, WorkRequest
 from cutiepy.types import Error, Ok, Result
-from pydantic.dataclasses import dataclass, Field
+from sqlalchemy import create_engine
+
+
 
 
 @dataclass
-class InProcessBroker(Broker):
-    task_requests: list[TaskRequest] = Field(default_factory=list)
+class SQLiteBroker(Broker):
+    sqlite_uri: str
+    task_requests: list[TaskRequest] = field(default_factory=list)
 
     async def _get_work(self, *, work_request: WorkRequest) -> Result:
         if len(self.task_requests) == 0:

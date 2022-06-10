@@ -1,11 +1,8 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from cutiepy.types import Result
-    from typing import Any, Dict, List, Optional
-    from .task import Task
+from cutiepy.types import Result
 from enum import Enum
 from pydantic.dataclasses import dataclass, Field
+from typing import Any, Dict, List, Optional
+from .task import Task
 
 
 class TaskRequestStatus(Enum):

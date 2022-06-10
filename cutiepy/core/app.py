@@ -10,9 +10,6 @@ from .task import Task
 class App:
     broker: Broker
 
-    async def start(self):
-        await asyncio.wait([self.supervisor.start()])
-
-    async def task(self, f: Callable) -> Task:
-        broker = self.broker
-        return Task(broker=broker, f=f)
+    def task(self, f: Callable) -> Task:
+        # TODO: Save task to registry.
+        return Task(f=f)
