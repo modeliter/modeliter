@@ -1,6 +1,5 @@
 from pydantic.dataclasses import dataclass
 from .broker import Broker
-from .supervisor import Supervisor
 
 
 @dataclass
@@ -13,7 +12,6 @@ class DashboardServerConfig:
 class DashboardServer:
     dashboard_server_config: DashboardServerConfig
     broker: Broker
-    supervisor: Supervisor
 
     async def start(self, port):
         return await self._start(port)

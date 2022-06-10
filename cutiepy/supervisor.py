@@ -1,19 +1,19 @@
-import os
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Any
+
+from dataclasses import dataclass
+from multiprocessing import Pipe, Process
 import signal
-from multiprocessing import Process, Pipe
 import time
-from pydantic import validator
-from pydantic.dataclasses import dataclass
-from typing import Any, Optional
 
+from cutiepy.core import Broker, WorkerConfig
 
-
-@dataclass
-class WorkerConfig:
-    pass
 
 @dataclass
 class RunnerProcess:
+    broker: Broker
     worker_config: WorkerConfig
     config_conn: Any
     shutdown_conn: Any
@@ -61,8 +61,10 @@ class RunnerProcess:
     def _begin_shutdown(self, _signum, _frame):
         self.should_shutdown = True
 
+
 @dataclass
 class WorkerProcess:
+    broker: Broker
     worker_config: WorkerConfig
     should_shutdown: bool = False
 
@@ -87,6 +89,7 @@ class WorkerProcess:
         runner_config_conn, child_config_conn = Pipe()
         runner_shutdown_conn, child_shutdown_conn = Pipe()
         runner_process = RunnerProcess(
+            broker=self.broker,
             worker_config=self.worker_config,
             config_conn=child_config_conn,
             shutdown_conn=child_shutdown_conn,
@@ -114,8 +117,10 @@ class WorkerProcess:
     def _begin_shutdown(self, _signum, _frame):
         self.should_shutdown = True
 
+
 @dataclass
 class Supervisor:
+    broker: Broker
     worker_config: WorkerConfig
     num_workers: int = 1
     should_shutdown: bool = False
@@ -143,7 +148,10 @@ class Supervisor:
             worker_process.join()
 
     def _spawn_worker(self) -> WorkerProcess:
-        worker_process = WorkerProcess(worker_config=self.worker_config)
+        worker_process = WorkerProcess(
+            broker=self.broker,
+            worker_config=self.worker_config,
+        )
         worker_process.start()
         return worker_process
 

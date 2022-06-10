@@ -1,6 +1,6 @@
 import click
 from cutiepy import __version__
-from .run import run
+from .worker import worker
 
 @click.group()
 @click.help_option("-h", "--help")
@@ -9,4 +9,4 @@ def cli_cutiepy():
     pass
 
 
-cli_cutiepy.add_command(run)
+cli_cutiepy.add_command(worker)

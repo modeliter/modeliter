@@ -5,8 +5,7 @@ if TYPE_CHECKING:
     from typing import Callable, Optional
     from .broker import Broker
     from .taskrequest import TaskRequest
-from pydantic import Field
-from pydantic.dataclasses import dataclass
+from pydantic.dataclasses import dataclass, Field
 import uuid
 
 

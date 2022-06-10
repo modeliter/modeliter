@@ -6,13 +6,13 @@ from .taskrequest import TaskRequest
 
 @dataclass
 class WorkerConfig:
-    type: str
+    pass
 
 
 @dataclass
 class Worker:
-    worker_config: WorkerConfig
     broker: Broker
+    worker_config: WorkerConfig
 
 
     async def start(self):

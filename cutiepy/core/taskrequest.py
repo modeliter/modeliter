@@ -5,8 +5,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, List, Optional
     from .task import Task
 from enum import Enum
-from pydantic.dataclasses import dataclass
-from pydantic import Field
+from pydantic.dataclasses import dataclass, Field
 
 
 class TaskRequestStatus(Enum):
