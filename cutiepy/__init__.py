@@ -8,7 +8,11 @@ def main():
 
 from dataclasses import dataclass, field
 from typing import Callable, List
-from .core import Broker, Task
+from .brokers import Broker, build_broker
+from .configloader import load_modes_from_config_file
+from .task import Task
+from .taskrequest import TaskRequest
+from .workrequest import WorkRequest
 
 @dataclass
 class CutiePy:
@@ -16,8 +20,10 @@ class CutiePy:
     broker: Broker = field(init=False)
 
     def __post_init__(self):
-        broker_type = "sqlite"
-        config = {}
+        modes = load_modes_from_config_file()
+        mode = modes[self.mode]
+        broker_config = mode.broker
+        self.broker = build_broker(broker_config=broker_config)
 
     def task(self, f: Callable) -> Task:
         return Task(f=f)

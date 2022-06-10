@@ -1,6 +1,5 @@
-from cutiepy.types import Tags
-from dataclasses import dataclass, field
-from typing import Callable, Optional
+from dataclasses import dataclass
+from typing import Callable
 
 
 @dataclass

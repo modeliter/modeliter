@@ -1,19 +1,9 @@
-from pydantic.dataclasses import dataclass
-from .taskrequest import TaskRequest
-from .taskrun import TaskRun
-from .workrequest import WorkRequest
+from cutiepy.taskrequest import TaskRequest
+from cutiepy.taskrun import TaskRun
+from cutiepy.workrequest import WorkRequest
 
 
-@dataclass
-class BrokerConfig:
-    type: str
-    sqlite_uri: str
-
-
-@dataclass
 class Broker:
-    broker_config: BrokerConfig
-
     async def get_work(self, *, work_request: WorkRequest) -> TaskRun:
         return await self._get_work(work_request=work_request)
 
@@ -37,3 +27,7 @@ class Broker:
 
     async def _put_task_run(self, *, task_run: TaskRun):
         raise NotImplementedError
+
+
+class BrokerConfig:
+    pass

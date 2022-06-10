@@ -1,8 +1,16 @@
-from .sqlitebroker import SQLiteBroker
+from .broker import (
+    Broker,
+    BrokerConfig,
+)
+from .sqlitebroker import (
+    SQLiteBroker,
+    SQLiteBrokerConfig,
+)
 
-def build_broker(config) -> Broker:
-    broker_type_to_class = {
-        "sqlite": SQLiteBroker,
+
+def build_broker(*, broker_config: BrokerConfig) -> Broker:
+    config_to_constructor = {
+        SQLiteBrokerConfig: SQLiteBroker,
     }
-    broker_constructor = broker_type_to_class[broker_config.type]
+    broker_constructor = config_to_constructor[broker_config.__class__]
     return broker_constructor(broker_config=broker_config)
