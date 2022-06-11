@@ -1,14 +1,10 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from typing import Any
-
+from typing import Any
 from dataclasses import dataclass
 from multiprocessing import Pipe, Process
 import signal
 import time
-
-from cutiepy.core import Broker, WorkerConfig
+from cutiepy.brokers import Broker
+from cutiepy.workers import WorkerConfig
 
 
 @dataclass

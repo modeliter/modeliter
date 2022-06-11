@@ -6,18 +6,19 @@ def main():
     sys.exit(cli_cutiepy())
 
 
-from dataclasses import dataclass, field
-from typing import Callable, List
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from typing import Callable, Optional
+import uuid
 from .brokers import Broker, build_broker
 from .configloader import load_modes_from_config_file
-from .task import Task
-from .taskrequest import TaskRequest
-from .workrequest import WorkRequest
+from .tasks import Task
+from .taskrequests import TaskRequest
 
 @dataclass
 class CutiePy:
     mode: str = "default"
-    broker: Broker = field(init=False)
+    broker: Broker = Field(init=False)
 
     def __post_init__(self):
         modes = load_modes_from_config_file()
@@ -32,7 +33,13 @@ class CutiePy:
         self,
         task: Task,
         *,
-        args: List[any] = list,
-        kwargs: dict[str, any] = dict,
+        args: Optional[list[any]] = None,
+        kwargs: Optional[dict[str, any]] = None,
         ) -> None:
-        pass
+        task_request = TaskRequest(
+            id=str(uuid.uuid4()),
+            task=task,
+            args=args if args is not None else [],
+            kwargs=kwargs if kwargs is not None else {},
+        )
+        self.broker.put_task_request(task_request=task_request)

@@ -1,15 +1,10 @@
 from pathlib import Path
 from typing import Tuple
-from cutiepy.brokers import (
-    BrokerConfig,
-    SQLiteBrokerConfig,
-)
-from cutiepy.resultstorages import (
-    ResultStorageConfig,
-    SQLiteResultStorageConfig,
-)
-from cutiepy.mode import Mode
+from cutiepy.brokers import SQLiteBrokerConfig
+from cutiepy.resultstorages import SQLiteResultStorageConfig
+from cutiepy.modes import Mode
 from cutiepy.workers import WorkerConfig
+
 
 CONFIG_MODULE_NAME = "cutieconfig"
 HOME_CONFIG_PATH = Path(Path.home() / ".cutiepy").resolve()
@@ -20,7 +15,7 @@ def build_default_mode_dict():
     return {
         "default": Mode(
             broker=SQLiteBrokerConfig(
-                path="./.cutiepy/default/broker.sqlite",
+                path="./broker.sqlite",
             ),
             result_storage=SQLiteResultStorageConfig(
                 path="./.cutiepy/default/resultstorage.sqlite",
@@ -29,7 +24,7 @@ def build_default_mode_dict():
         ),
         "dev": Mode(
             broker=SQLiteBrokerConfig(
-                path="./.cutiepy/dev/broker.sqlite",
+                path="./broker.sqlite",
             ),
             result_storage=SQLiteResultStorageConfig(
                 path="./.cutiepy/dev/resultstorage.sqlite",

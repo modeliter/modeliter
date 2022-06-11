@@ -1,7 +1,7 @@
 from pydantic.dataclasses import dataclass
 from typing import Callable
 from .broker import Broker
-from .task import Task
+from .tasks import Task
 
 
 @dataclass

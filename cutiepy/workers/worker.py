@@ -1,7 +1,7 @@
 from pydantic.dataclasses import dataclass
 from cutiepy.types import Error, Ok, Result
-from cutiepy.task import Task
-from cutiepy.workrequest import WorkRequest
+from cutiepy.tasks import Task
+from cutiepy.workrequests import WorkRequest
 
 @dataclass
 class WorkerConfig:

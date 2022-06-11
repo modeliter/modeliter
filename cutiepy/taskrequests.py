@@ -1,8 +1,8 @@
 from cutiepy.types import Result
 from enum import Enum
-from pydantic.dataclasses import dataclass, Field
-from typing import Any, Dict, List, Optional
-from cutiepy.task import Task
+from pydantic.dataclasses import dataclass
+from typing import Any, Optional
+from cutiepy.tasks import Task
 
 
 class TaskRequestStatus(Enum):
@@ -16,8 +16,8 @@ class TaskRequestStatus(Enum):
 class TaskRequest:
     id: str
     task: Task
-    task_args: List[Any] = Field(default_factory=list)
-    task_kwargs: Dict[str, Any] = Field(default_factory=dict)
+    args: list
+    kwargs: dict[str, Any]
     status: Optional[TaskRequestStatus] = None
     result: Optional[Result] = None
     num_run_retries: int = 0

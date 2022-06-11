@@ -1,16 +1,15 @@
 import click
-from cutiepy import factories
 from cutiepy.processes.supervisorprocess import SupervisorProcess
-from cutiepy.core import BrokerConfig, WorkerConfig
+from cutiepy.brokers import SQLiteBrokerConfig, build_broker
+from cutiepy.workers import WorkerConfig
 
 
 @click.command(help="Starts workers for running tasks.")
 def worker():
-    broker_config = BrokerConfig(
-        type="sqlite",
-        sqlite_uri="sqlite:///cutiepy.db",
+    broker_config = SQLiteBrokerConfig(
+        path="sqlite:///cutiepy.db",
     )
-    broker = factories.build_broker(broker_config=broker_config)
+    broker = build_broker(broker_config=broker_config)
     worker_config = WorkerConfig()
 
     supervisor = SupervisorProcess(
