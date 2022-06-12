@@ -4,7 +4,6 @@ from .models import Base
 
 
 def build_engine(*, path: Path):
-    print(path)
     engine = create_engine(
         url=f"sqlite:///{path.resolve()}",
         echo=True,

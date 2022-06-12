@@ -1,0 +1,2 @@
+class BookState:
+    pass

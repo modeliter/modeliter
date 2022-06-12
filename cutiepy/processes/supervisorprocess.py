@@ -3,13 +3,13 @@ from dataclasses import dataclass
 from multiprocessing import Pipe, Process
 import signal
 import time
-from cutiepy.brokers import Broker
+from cutiepy.brokers import BrokerConfig, build_broker
 from cutiepy.workers import WorkerConfig
 
 
 @dataclass
 class RunnerProcess:
-    broker: Broker
+    broker_config: BrokerConfig
     worker_config: WorkerConfig
     config_conn: Any
     shutdown_conn: Any
@@ -47,6 +47,7 @@ class RunnerProcess:
 
     def tick(self):
         print("Runner tick")
+        broker = build_broker(broker_config=self.broker_config)
         time.sleep(1)
 
     def _install_signal_handlers(self):
@@ -60,7 +61,7 @@ class RunnerProcess:
 
 @dataclass
 class WorkerProcess:
-    broker: Broker
+    broker_config: BrokerConfig
     worker_config: WorkerConfig
     should_shutdown: bool = False
 
@@ -85,7 +86,7 @@ class WorkerProcess:
         runner_config_conn, child_config_conn = Pipe()
         runner_shutdown_conn, child_shutdown_conn = Pipe()
         runner_process = RunnerProcess(
-            broker=self.broker,
+            broker_config=self.broker_config,
             worker_config=self.worker_config,
             config_conn=child_config_conn,
             shutdown_conn=child_shutdown_conn,
@@ -116,7 +117,7 @@ class WorkerProcess:
 
 @dataclass
 class SupervisorProcess:
-    broker: Broker
+    broker_config: BrokerConfig
     worker_config: WorkerConfig
     num_workers: int = 1
     should_shutdown: bool = False
@@ -145,7 +146,7 @@ class SupervisorProcess:
 
     def _spawn_worker(self) -> WorkerProcess:
         worker_process = WorkerProcess(
-            broker=self.broker,
+            broker_config=self.broker_config,
             worker_config=self.worker_config,
         )
         worker_process.start()

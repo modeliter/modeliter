@@ -4,14 +4,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 import uuid
 
-from cutiepy.taskrequests import TaskRequest
+from cutiepy.taskrequests import TaskRequest, TaskRequestStatus
 from cutiepy.taskruns import TaskRun
 from cutiepy.workrequests import WorkRequest
-from cutiepy.types import Error, Ok, Result
 from pydantic import Field
 from .broker import Broker, BrokerConfig
 from cutiepy.sql import build_engine
-from cutiepy.sql.models import TaskRequestModel
+from cutiepy.sql.models import TaskRequestModel, TaskRunModel
 from sqlalchemy.orm import Session
 
 
@@ -28,19 +27,29 @@ class SQLiteBroker(Broker):
     def __post_init__(self):
         self.engine = build_engine(path=self.broker_config.path)
 
-    def _get_work(self, *, work_request: WorkRequest) -> Result:
-        if len(self.task_requests) == 0:
-            return Error("No task requests are waiting.")
+    def _get_work(self, *, work_request: WorkRequest) -> TaskRun:
+        with Session(self.engine) as session:
+            task_request_model = session.query(TaskRequestModel).filter(TaskRequestModel.status==TaskRequestStatus.WAITING).one_or_none()
+            if task_request_model is None:
+                return None
 
-        task_request = self.task_requests.pop()
-        task_run = TaskRun(
-            id=uuid.uuid4().hex,
-            task=task_request.task,
-            broker_ref=uuid.uuid4(),
-            worker_ref=work_request.worker_ref,
-            broker_created_at=datetime.now(timezone.utc),
-        )
-        return Ok(task_run)
+            task_run = TaskRun(
+                id=str(uuid.uuid4()),
+                task_request=TaskRequest.from_model(task_request_model),
+                worker_ref=work_request.worker_ref,
+                broker_created_at=datetime.now(timezone.utc),
+            )
+            task_run_model = TaskRunModel(
+                id=task_run.id,
+                task_request=task_request_model,
+                worker_ref=task_run.worker_ref,
+                broker_created_at=task_run.broker_created_at,
+            )
+            task_request_model.status = TaskRequestStatus.RUNNING
+            session.add(task_request_model)
+            session.add(task_run_model)
+            session.commit()
+            return task_run
 
     def _put_task_request(self, *, task_request: TaskRequest):
         task_request_model = TaskRequestModel(

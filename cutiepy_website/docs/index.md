@@ -36,6 +36,11 @@ Here are some high-level resources to help you learn more about CutiePy.
     <br/>
     <span style={{"font-style": "italic"}}>User manual for the CutiePy library, <code style={{"font-style": "normal"}}>cutiepy</code> commands, and configuration options</span>
 </p>
+<p>
+    <a href="/docs/quickstart" style={{"font-size": "1.25rem", "font-weight": "bold"}}>Performance Guide</a>
+    <br/>
+    <span style={{"font-style": "italic"}}>Design patterns and performance considerations for production environments</span>
+</p>
 
 ## What is CutiePy?
 
