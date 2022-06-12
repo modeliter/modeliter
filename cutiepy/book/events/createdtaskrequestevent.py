@@ -1,9 +1,9 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
-from .bookevent import BookEvent
+from cutiepy.book.events.bookevent import BookEvent
 
 @dataclass
-class CreatedTaskRequest(BookEvent):
+class CreatedTaskRequestEvent(BookEvent):
     created_task_request_at: datetime
     task_request_id: str
     function_pickle: bytes

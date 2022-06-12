@@ -1,8 +1,8 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
-from .bookevent import BookEvent
+from cutiepy.book.events.bookevent import BookEvent
 
 @dataclass
-class TimedOutTaskRun(BookEvent):
+class TimedOutTaskRunEvent(BookEvent):
     timed_out_task_run_at: datetime
     task_run_id: str

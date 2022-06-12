@@ -1,8 +1,8 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
-from .bookevent import BookEvent
+from cutiepy.book.events.bookevent import BookEvent
 
 @dataclass
-class TimedOutWorker(BookEvent):
+class TimedOutWorkerEvent(BookEvent):
     timed_out_worker_at: datetime
     worker_id: str
