@@ -6,40 +6,37 @@ def main():
     sys.exit(cli_cutiepy())
 
 
+import pickle
+import duckdb
 from pydantic.dataclasses import dataclass
-from pydantic import Field
 from typing import Callable, Optional
 import uuid
-from .brokers import Broker, build_broker
-from .configloader import load_modes_from_config_file
-from .tasks import Task
-from .taskrequests import TaskRequest
+from cutiepy.book import Book
+from cutiepy.duckdb.book import DuckDBBook
+from cutiepy.book.events import CreatedTaskRequestEvent
+from datetime import datetime, timezone
 
-@dataclass
 class CutiePy:
-    mode: str = "default"
-    broker: Broker = Field(init=False)
+    book: Book
 
-    def __post_init__(self):
-        modes = load_modes_from_config_file()
-        mode = modes[self.mode]
-        broker_config = mode.broker
-        self.broker = build_broker(broker_config=broker_config)
-
-    def task(self, f: Callable) -> Task:
-        return Task(f=f)
+    def __init__(self):
+        con = duckdb.connect()
+        self.book = DuckDBBook(con=con)
 
     def enqueue(
         self,
-        task: Task,
+        function: Callable,
         *,
         args: Optional[list[any]] = None,
         kwargs: Optional[dict[str, any]] = None,
         ) -> None:
-        task_request = TaskRequest(
-            id=str(uuid.uuid4()),
-            task=task,
-            args=args if args is not None else [],
-            kwargs=kwargs if kwargs is not None else {},
+        created_task_request_event = CreatedTaskRequestEvent(
+            created_task_request_at=datetime.now(timezone.utc),
+            task_request_id=str(uuid.uuid4()),
+            function_pickle=pickle.dumps(function),
+            args_pickle=pickle.dumps(args),
+            kwargs_pickle=pickle.dumps(kwargs),
+            max_retries_on_error=0,
+            max_retries_on_time_out=0,
         )
-        self.broker.put_task_request(task_request=task_request)
+        self.book.handle_event(event=created_task_request_event)

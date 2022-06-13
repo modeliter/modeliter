@@ -15,8 +15,6 @@ from .unpausedworkertable import UnpausedWorkerTable
 
 @dataclass
 class BookSchema(DuckDBSchema):
-    SCHEMA_NAME = "book"
-
     TABLES = [
         CancelledTaskRequestTable,
         CompletedTaskRequestTable,
@@ -31,10 +29,6 @@ class BookSchema(DuckDBSchema):
         TimedOutWorkerTable,
         UnpausedWorkerTable,
     ]
-
-    @classmethod
-    def name(cls) -> str:
-        return cls.SCHEMA_NAME
 
     @classmethod
     def tables(cls) -> list[DuckDBTable]:

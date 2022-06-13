@@ -9,5 +9,5 @@ class CreatedTaskRequestEvent(BookEvent):
     function_pickle: bytes
     args_pickle: bytes
     kwargs_pickle: bytes
-    max_retries_on_time_out: int
     max_retries_on_error: int
+    max_retries_on_time_out: int

@@ -1,9 +1,8 @@
 import time
 from cutiepy import CutiePy
 
-cutie = CutiePy(mode="dev")
+cutie = CutiePy()
 
-@cutie.task
 def bake_a_pie(flavor, recipient):
     time.sleep(3)
     print(f"Your {flavor} pie for {recipient} is ready!")

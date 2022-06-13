@@ -1,3 +1,3 @@
-from .column import DuckDBColumn
-from .schema import DuckDBSchema
-from .table import DuckDBTable
+from cutiepy.duckdb.schema import DuckDBSchema
+from cutiepy.duckdb.table import DuckDBTable
+from duckdb import *
