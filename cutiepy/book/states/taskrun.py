@@ -7,10 +7,10 @@ from .worker import Worker
 @dataclass
 class TaskRun:
     id: str
-    task_request: TaskRequest
-    worker: Worker
-    sent_by_book_at: datetime
+    task_request_id: str
+    worker_id: str
+    sent_at: datetime
     started_by_worker_at: datetime
     finished_by_worker_at: datetime
-    received_by_book_at: datetime
+    received_at: datetime
     task_result: TaskResult

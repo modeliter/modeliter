@@ -1,6 +1,11 @@
+from enum import Enum
 from pydantic.dataclasses import dataclass
 from datetime import datetime
-from .workerstatus import WorkerStatus
+
+class WorkerStatus(Enum):
+    AVAILABLE = "AVAILABLE"
+    BUSY = "BUSY"
+    DROPPED = "DROPPED"
 
 @dataclass
 class Worker:

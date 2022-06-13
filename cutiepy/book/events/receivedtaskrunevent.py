@@ -1,6 +1,5 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
-from cutiepy.book.states import TaskResult
 from cutiepy.book.events.bookevent import BookEvent
 
 @dataclass
@@ -10,4 +9,4 @@ class ReceivedTaskRunEvent(BookEvent):
     worker_id: str
     started_by_worker_at: datetime
     finished_by_worker_at: datetime
-    task_result: TaskResult
+    task_result_pickle: bytes
