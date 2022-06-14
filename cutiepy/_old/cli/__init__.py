@@ -1,11 +1,12 @@
 import click
 from cutiepy import __version__
-from cutiepy.cli.commandbroker import command_broker
+from cutiepy.cli.worker import worker
 
 @click.group
 @click.help_option("-h", "--help")
 @click.version_option(__version__, "-v", "--version")
-def cutiepy_cli():
+def cli_cutiepy():
     pass
 
-cutiepy_cli.add_command(command_broker)
+
+cli_cutiepy.add_command(worker)
