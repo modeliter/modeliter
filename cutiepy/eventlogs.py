@@ -4,7 +4,7 @@ from pydantic.dataclasses import dataclass
 @dataclass
 class EventLog(ABC):
     @abstractmethod
-    def append(self, event: dict):
+    def append(self, event: dict) -> None:
         raise NotImplementedError("This method should be implemented by a subclass.")
 
     @abstractmethod
@@ -17,7 +17,7 @@ class InMemoryEventLog(EventLog):
     def __init__(self):
         self._events = []
 
-    def append(self, event: dict):
+    def append(self, event: dict) -> None:
         self._events.append(event)
     
     def events(self) -> list[dict]:

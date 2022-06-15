@@ -1,4 +1,6 @@
-def main():
+from typing import NoReturn
+
+def main() -> NoReturn:
     from cutiepy.cli import build_cutiepy_cli as build_cli
     from sys import exit
 

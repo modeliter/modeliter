@@ -4,10 +4,6 @@ from pydantic.dataclasses import dataclass
 from typing import Optional
 import uuid
 
-def build_broker_service(event_log: EventLog):
-    return BrokerService(event_log=event_log)
-
-
 @dataclass
 class BrokerService:
     event_log: EventLog
@@ -27,19 +23,31 @@ class BrokerService:
             "function_serialized": function_serialized,
         }
         self.event_log.append(event)
-        return self.task(task_id)
+        return self.task(task_id=task_id)
 
     def register_worker(self, worker_id: str) -> dict:
-        if worker_id is not None and self._is_worker_registered(worker_id=worker_id):
+        if self._worker_is_registered(worker_id=worker_id):
             raise RuntimeError(f"Worker with ID {worker_id} already exists.")
 
         event = {
-            "timestamp": datetime.isoformat((datetime.now(timezone.utc))),
+            "timestamp": datetime.isoformat(datetime.now(timezone.utc)),
             "event_type": "REGISTERED_WORKER",
             "worker_id": worker_id,
         }
         self.event_log.append(event)
-        return event
+        return self.worker(worker_id=worker_id)
+
+    def send_worker_heartbeat(self, worker_id: str) -> dict:
+        if not self._worker_is_alive(worker_id=worker_id):
+            raise RuntimeError(f"Worker with ID {worker_id} is not alive.")
+
+        event = {
+            "timestamp": datetime.isoformat(datetime.now(timezone.utc)),
+            "event_type": "SENT_WORKER_HEARTBEAT",
+            "worker_id": worker_id,
+        }
+        self.event_log.append(event)
+        return self.worker(worker_id=worker_id)
 
     #############
     ## Queries ##
@@ -65,11 +73,19 @@ class BrokerService:
                         "created_at": event["timestamp"],
                         "task_id": event["task_id"],
                         "function_serialized": event["function_serialized"],
+                        "status": "WAITING",
                     }
                 case _event_type:
                     raise RuntimeError(f"Unexpected task event type: {_event_type}")
 
         return list(tasks_dict.values())
+
+    def worker(self, worker_id: str) -> Optional[dict]:
+        workers = self.workers()
+        for worker in workers:
+            if worker["worker_id"] == worker_id:
+                return worker
+        return None
 
     def workers(self) -> list[dict]:
         events = self.event_log.events()
@@ -83,7 +99,13 @@ class BrokerService:
                     workers_dict[worker_id] = {
                         "registered_at": event["timestamp"],
                         "worker_id": event["worker_id"],
+                        "status": "AVAILABLE",
                     }
+                case "SENT_WORKER_HEARTBEAT":
+                    worker_id = event["worker_id"]
+                    worker = workers_dict[worker_id]
+                    worker["last_heartbeat_timestamp"] = event["timestamp"]
+                    workers_dict[worker_id] = worker
                 case _event_type:
                     raise RuntimeError(f"Unexpected worker event type: {_event_type}")
         
@@ -93,10 +115,25 @@ class BrokerService:
     ## Helper Functions ##
     ######################
 
-    def _is_worker_registered(self, worker_id: str) -> bool:
-        workers = self.workers()
-        return any(map(lambda worker: worker["worker_id"] == worker_id, workers))
-
     def _task_exists(self, task_id: str) -> bool:
-        tasks = self.tasks()
-        return any(map(lambda task: task["task_id"] == task_id, tasks))
+        task = self.task(task_id=task_id)
+        return task is not None
+
+    def _worker_is_alive(self, worker_id: str) -> bool:
+        worker = self.worker(worker_id)
+        if worker is None:
+            return False
+        return worker["status"] != "DROPPED"
+
+    def _worker_is_dropped(self, worker_id: str) -> bool:
+        worker = self.worker(worker_id)
+        if worker is None:
+            return False
+        return worker["status"] == "DROPPED"
+
+    def _worker_is_registered(self, worker_id: str) -> bool:
+        worker = self.worker(worker_id)
+        return worker is not None
+
+def build_broker_service(event_log: EventLog) -> BrokerService:
+    return BrokerService(event_log=event_log)

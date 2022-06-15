@@ -1,15 +1,14 @@
 from cutiepy.broker.services import BrokerService
-import json
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse, Response
 from starlette.requests import Request
 from starlette.routing import Route
 from typing import Callable
 
-def build_broker_http_api_app(broker_service: BrokerService):
+def build_broker_http_api_app(broker_service: BrokerService) -> Starlette:
     return Starlette(routes=_build_routes(broker_service=broker_service))
 
-def _build_routes(broker_service: BrokerService):
+def _build_routes(broker_service: BrokerService) -> list[Route]:
     return [
         Route(
             methods=["GET"],
@@ -25,6 +24,11 @@ def _build_routes(broker_service: BrokerService):
             methods=["POST"],
             path="/commands/register_worker",
             endpoint=_command_register_worker_handler(broker_service=broker_service),
+        ),
+        Route(
+            methods=["POST"],
+            path="/commands/send_worker_heartbeat",
+            endpoint=_command_send_worker_heartbeat_handler(broker_service=broker_service),
         ),
     ]
 
@@ -62,3 +66,16 @@ def _command_register_worker_handler(broker_service: BrokerService) -> Callable[
         return JSONResponse({"worker": worker})
 
     return handle_command_register_worker
+
+def _command_send_worker_heartbeat_handler(broker_service: BrokerService) -> Callable[[Request], Response]:
+    async def handle_command_send_worker_heartbeat_handler(request: Request) -> Response:
+        body = await request.json()
+        worker_id = body["worker_id"]
+
+        worker = broker_service.send_worker_heartbeat(
+            worker_id=worker_id,
+        )
+
+        return JSONResponse({"worker": worker})
+
+    return handle_command_send_worker_heartbeat_handler
