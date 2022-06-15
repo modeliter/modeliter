@@ -48,5 +48,18 @@ def test_create_and_then_get_tasks(test_client):
     response_body = response.json()
     assert len(response_body["tasks"]) == 1
 
+def test_register_worker(test_client):
+    worker = {
+        "worker_id": str(uuid.uuid4()),
+    }
+    response: requests.Response = test_client.post(
+        url="/commands/register_worker",
+        json=worker,
+    )
+
+    assert response.status_code == 200
+    response_body = response.json()
+    assert response_body["worker"]["worker_id"] == worker["worker_id"]
+
 def _test_function():
     pass
