@@ -34,7 +34,7 @@ Source = "https://github.com/unknown/modeliter"
 cutiepy = "cutiepy:main"
 
 [tool.hatch.version]
-path = "cutiepy/__init__.py"
+path = "cutiepy/__version__.py"
 
 [tool.hatch.build]
 ignore-vcs = true

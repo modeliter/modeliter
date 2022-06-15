@@ -1,5 +1,5 @@
 import click
-from cutiepy import __version__
+from cutiepy.cli import __version__
 from cutiepy.cli.worker import worker
 
 @click.group

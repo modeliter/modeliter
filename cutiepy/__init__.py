@@ -1,6 +1,6 @@
-__version__ = "0.1.0"
-
 def main():
-    import sys
-    from cutiepy.cli import cutiepy_cli
-    sys.exit(cutiepy_cli())
+    from cutiepy.cli import build_cutiepy_cli as build_cli
+    from sys import exit
+
+    cutiepy_cli = build_cli()
+    exit(cutiepy_cli())

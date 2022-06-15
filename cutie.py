@@ -1,5 +1,5 @@
 import time
-from cutiepy import CutiePy
+from cutiepy.cli import CutiePy
 
 cutie = CutiePy()
 
