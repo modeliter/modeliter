@@ -1,14 +1,17 @@
+from cutiepy import broker
 from cutiepy.broker.services import BrokerService
 from starlette.applications import Starlette
+from starlette.endpoints import WebSocketEndpoint
 from starlette.responses import JSONResponse, Response
 from starlette.requests import Request
-from starlette.routing import Route
+from starlette.routing import Route, WebSocketRoute
+from starlette.websockets import WebSocket
 from typing import Callable
 
 def build_broker_http_api_app(broker_service: BrokerService) -> Starlette:
     return Starlette(routes=_build_routes(broker_service=broker_service))
 
-def _build_routes(broker_service: BrokerService) -> list[Route]:
+def _build_routes(broker_service: BrokerService) -> list[Route | WebSocketRoute]:
     return [
         Route(
             methods=["GET"],
@@ -29,6 +32,10 @@ def _build_routes(broker_service: BrokerService) -> list[Route]:
             methods=["POST"],
             path="/commands/send_worker_heartbeat",
             endpoint=_command_send_worker_heartbeat_handler(broker_service=broker_service),
+        ),
+        WebSocketRoute(
+            path="/ws/task_runs",
+            endpoint=_task_runs_websocket_handler(broker_service=broker_service),
         ),
     ]
 
@@ -79,3 +86,20 @@ def _command_send_worker_heartbeat_handler(broker_service: BrokerService) -> Cal
         return JSONResponse({"worker": worker})
 
     return handle_command_send_worker_heartbeat_handler
+
+
+
+def _task_runs_websocket_handler(broker_service: BrokerService) -> WebSocketEndpoint:
+    class TaskRunsWebsocketEndpoint(WebSocketEndpoint):
+        encoding: str = "json"
+
+        async def on_connect(self, websocket):
+            await websocket.accept()
+
+        async def on_receive(self, websocket, data):
+            await websocket.send_json({"message": "Hello!"})
+
+        async def on_disconnect(self, websocket, close_code):
+            pass
+
+    return TaskRunsWebsocketEndpoint

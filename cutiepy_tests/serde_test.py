@@ -16,6 +16,10 @@ def test_serde():
 
     test_cases = [
         TestCase(
+            name="none",
+            object=None,
+        ),
+        TestCase(
             name="int",
             object=1,
         ),
