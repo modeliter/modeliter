@@ -2,6 +2,7 @@ from cutiepy.broker.http_api import build_broker_http_api_app as build_app
 from cutiepy.broker.services import build_broker_service
 from cutiepy.eventlogs import InMemoryEventLog
 import cutiepy.serde as serde
+from datetime import datetime, timezone
 import pytest
 from starlette.testclient import TestClient
 import uuid
@@ -77,38 +78,32 @@ def test_send_worker_heartbeat(test_client, worker):
 
     assert response.status_code == 200
 
-# async def test_return_task_run(test_client, task, worker):
-#     task_run = {
-#         "task_run_id": str(uuid.uuid4()),
-#         "worker_id": worker["worker_id"],
-#         "started_at": datetime.isoformat(datetime.now(timezone.utc)),
-#         "finished_at": datetime.isoformat(datetime.now(timezone.utc)),
-#         "result_serialized": serde.serialize(None),
-#     }
-#     with handle_task_runs_websocket.websocket_connect("/ws/task_runs") as ws_task_runs:
-#         ws_task_runs.send_json({"task_run": task_run})
+def test_assign_task_runs(test_client, worker):
+    # Pretend to be a worker's runner process.
+    with test_client.websocket_connect("/ws/task_runs") as websocket:
+        worker_id = worker["worker_id"]
+        payload_init_worker_id = {
+            "message_type": "init_worker_id",
+            "message": {"worker_id": worker_id},
+        }
+        websocket.send_json(payload_init_worker_id)
 
-def test_app(test_client):
-    from starlette.endpoints import WebSocketEndpoint
-    from starlette.routing import WebSocketRoute
-    from starlette.applications import Starlette
-
-    class Echo(WebSocketEndpoint):
-        encoding = "text"
-
-        async def on_receive(self, websocket, data):
-            await websocket.send_text(f"Message text was: {data}")
-
-    routes = [
-        WebSocketRoute("/ws", Echo)
-    ]
-
-    app = Starlette(routes=routes)
-
-    with test_client.websocket_connect('/ws/task_runs') as websocket:
-        websocket.send_json({"message": "hi!"})
-        data = websocket.receive_json()
-        assert data == {"message": "Hello!"}
+        task_run = websocket.receive_json()
+        print(f"Worker received task run: {task_run}")
+        task_run_id = task_run["task_run_id"]
+        started_at = datetime.isoformat(datetime.now(timezone.utc))
+        finished_at = datetime.isoformat(datetime.now(timezone.utc))
+        payload_return_task_run = {
+            "message_type": "return_task_run",
+            "message": {
+                "worker_id": worker_id,
+                "task_run_id": task_run_id,
+                "started_at": started_at,
+                "finished_at": finished_at,
+            },
+        }
+        websocket.send_json()
+        websocket.close()
 
 def _test_function():
     pass

@@ -1,4 +1,10 @@
 from cutiepy.eventlogs import EventLog
+from cutiepy.broker.errors import (
+    TaskAlreadyExistsError,
+    WorkerDroppedError,
+    WorkerAlreadyRegisteredError,
+    WorkerNotRegisteredError,
+)
 from datetime import datetime, timezone
 from pydantic.dataclasses import dataclass
 from typing import Optional
@@ -14,7 +20,7 @@ class BrokerService:
 
     def create_task(self, task_id: Optional[str], function_serialized: str) -> dict:
         if task_id is not None and self._task_exists(task_id=task_id):
-            raise RuntimeError(f"Task with ID {task_id} already exists.")
+            raise TaskAlreadyExistsError(task_id=task_id)
 
         event = {
             "timestamp": datetime.isoformat((datetime.now(timezone.utc))),
@@ -26,8 +32,9 @@ class BrokerService:
         return self.task(task_id=task_id)
 
     def register_worker(self, worker_id: str) -> dict:
-        if self._worker_is_registered(worker_id=worker_id):
-            raise RuntimeError(f"Worker with ID {worker_id} already exists.")
+        worker = self.worker(worker_id=worker_id)
+        if worker is not None:
+            raise WorkerAlreadyRegisteredError(worker_id=worker_id)
 
         event = {
             "timestamp": datetime.isoformat(datetime.now(timezone.utc)),
@@ -38,8 +45,12 @@ class BrokerService:
         return self.worker(worker_id=worker_id)
 
     def send_worker_heartbeat(self, worker_id: str) -> dict:
-        if not self._worker_is_alive(worker_id=worker_id):
-            raise RuntimeError(f"Worker with ID {worker_id} is not alive.")
+        worker = self.worker(worker_id=worker_id)
+        if worker is None:
+            raise WorkerNotRegisteredError(worker_id=worker_id)
+
+        if worker["status"] == "DROPPED":
+            raise WorkerDroppedError(worker_id=worker_id)
 
         event = {
             "timestamp": datetime.isoformat(datetime.now(timezone.utc)),
@@ -119,10 +130,12 @@ class BrokerService:
         task = self.task(task_id=task_id)
         return task is not None
 
-    def _worker_is_alive(self, worker_id: str) -> bool:
+    def worker_is_alive(self, worker_id: str) -> bool:
         worker = self.worker(worker_id)
         if worker is None:
+            print("Worker is None")
             return False
+        print(f"Worker status: {worker}")
         return worker["status"] != "DROPPED"
 
     def _worker_is_dropped(self, worker_id: str) -> bool:

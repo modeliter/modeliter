@@ -1,5 +1,9 @@
-from cutiepy import broker
+import asyncio
 from cutiepy.broker.services import BrokerService
+from cutiepy.broker.errors import (
+    WorkerDroppedError,
+    WorkerNotRegisteredError,
+)
 from starlette.applications import Starlette
 from starlette.endpoints import WebSocketEndpoint
 from starlette.responses import JSONResponse, Response
@@ -9,7 +13,8 @@ from starlette.websockets import WebSocket
 from typing import Callable
 
 def build_broker_http_api_app(broker_service: BrokerService) -> Starlette:
-    return Starlette(routes=_build_routes(broker_service=broker_service))
+    routes = _build_routes(broker_service=broker_service)
+    return Starlette(routes=routes)
 
 def _build_routes(broker_service: BrokerService) -> list[Route | WebSocketRoute]:
     return [
@@ -87,19 +92,57 @@ def _command_send_worker_heartbeat_handler(broker_service: BrokerService) -> Cal
 
     return handle_command_send_worker_heartbeat_handler
 
-
-
 def _task_runs_websocket_handler(broker_service: BrokerService) -> WebSocketEndpoint:
     class TaskRunsWebsocketEndpoint(WebSocketEndpoint):
         encoding: str = "json"
+        worker_id: str
 
-        async def on_connect(self, websocket):
+        async def on_connect(self, websocket: WebSocket) -> None:
             await websocket.accept()
+            print("Server: Connected to client!")
 
-        async def on_receive(self, websocket, data):
-            await websocket.send_json({"message": "Hello!"})
+        async def on_receive(self, websocket: WebSocket, data: any) -> None:
+            print("Server: Received data from client!")
+            message_type: str = data["message_type"]
+            message: dict = data["message"]
+            match message_type:
+                case "init_worker_id":
+                    print("Server: Received init_worker_id.")
+                    worker_id = message["worker_id"]
+                    self.worker_id = worker_id
+                case "return_task_run":
+                    print("Server: Received return_task_run.")
+                    worker_id = message["worker_id"]
+                    task_run_id = message["task_run_id"]
+                    started_at = message["started_at"]
+                    finished_at = message["finished_at"]
+                    broker_service.return_task_run(
+                        worker_id=worker_id,
+                        task_run_id=task_run_id,
+                        started_at=started_at,
+                        finished_at=finished_at,
+                    )
 
-        async def on_disconnect(self, websocket, close_code):
-            pass
+            task_run = None
+            while task_run is None:
+                try:
+                    task_run = broker_service.assign_task_run(
+                        worker_id=worker_id,
+                    )
+                except (WorkerDroppedError, WorkerNotRegisteredError) as e:
+                    print(f"Server: {str(e)}. Closing connection.")
+                    await websocket.close()
+                    return
+                
+                if task_run is not None:
+                    print("Server: Assigned a task run.")
+                    await websocket.send_json(task_run)
+                    return
+
+                print("Server: No compatible task runs. Sleeping and trying again.")
+                await asyncio.sleep(1)
+
+        async def on_disconnect(self, websocket: WebSocket, close_code: int) -> None:
+            print("Server: Disconnected from client.")
 
     return TaskRunsWebsocketEndpoint
